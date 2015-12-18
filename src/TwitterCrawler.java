@@ -15,6 +15,7 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 class TwitterCrawler {
+	
     
     final String CONSUMER_KEY = "zaFZcEP7i70wjxX8oJxZoGmJv";
     final String CONSUMER_KEY_SECRET = "Ee4DtLckHTHQebNhk0vNJCfyY33ucJo3JSZBHbJAFxB3bBioIJ";
