@@ -7,5 +7,10 @@
 	<classpathentry kind="lib" path="/home/simone/Scrivania/twitter4j/lib/twitter4j-examples-4.0.4.jar"/>
 	<classpathentry kind="lib" path="/home/simone/Scrivania/twitter4j/lib/twitter4j-media-support-4.0.4.jar"/>
 	<classpathentry kind="lib" path="/home/simone/Scrivania/twitter4j/lib/twitter4j-stream-4.0.4.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/postgresql-9.4-1206-jdbc4.jar"/>
+	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/openjpa-2.4.0.jar"/>
+	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/openjpa-all-2.4.0.jar"/>
+	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/slf4j-simple-1.7.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

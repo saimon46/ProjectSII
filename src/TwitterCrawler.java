@@ -3,6 +3,11 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
 import twitter4j.Query;
 import twitter4j.Query.ResultType;
 import twitter4j.QueryResult;
@@ -22,6 +27,9 @@ class TwitterCrawler {
     final String ACCESS_TOKEN_SECRET = "k69lmJJCGIbs3QwA0opYYZDRUJLnzonXhr6YTmZRCVZK4";
     
     void run() throws FileNotFoundException, IOException, TwitterException, InterruptedException {
+    	EntityManagerFactory emf = Persistence.createEntityManagerFactory("projectSII");
+		EntityManager em = emf.createEntityManager();
+
     	ConfigurationBuilder builder = new ConfigurationBuilder();
     	builder.setOAuthConsumerKey(CONSUMER_KEY);
     	builder.setOAuthConsumerSecret(CONSUMER_KEY_SECRET);
@@ -43,6 +51,9 @@ class TwitterCrawler {
 	        QueryResult result = twitter.search(query);
 	        int j=1;
 	        for (Status status : result.getTweets()) {
+	        	EntityTransaction tx = em.getTransaction();
+	    		tx.begin();
+	    		
 	        	URLEntity[] urls = status.getURLEntities();
 	        	
 	        	if(UrlUtility.containsUrlSpotify(urls)){
@@ -52,6 +63,10 @@ class TwitterCrawler {
 	        		for(String id:ids){
 	        			idString += id + " - ";
 	        		}
+	        		
+	        		User user = new User();
+	        		user.setIdTwitter(status.getUser().getId());
+	        		user.setName(status.getUser().getScreenName());
 	        		
 		        	String str = i + "." + j + "..:" + status.getCreatedAt().toString() + " @" + status.getUser().getScreenName() + ":" + idString;
 		        	
@@ -66,5 +81,7 @@ class TwitterCrawler {
         }
         
         out.close();
+        em.close();
+		emf.close();
     }
 }
