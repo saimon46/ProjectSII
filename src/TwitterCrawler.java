@@ -2,7 +2,6 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 import twitter4j.Query;
 import twitter4j.Query.ResultType;
@@ -17,12 +16,10 @@ import twitter4j.conf.ConfigurationBuilder;
 
 class TwitterCrawler {
 	
-    
     final String CONSUMER_KEY = "WCADpVfbO6csxBLTlKK9SWTqW";
     final String CONSUMER_KEY_SECRET = "fjokyct4BQoUQYCDOEq1eyCZZ1Bqx5UTY7GacKn1kHYJfA0Vv7";
     final String ACCESS_TOKEN = "4482711635-W4kukDswSRXCkBarjh8fz7wFW3ZoRvyf1ASml2F";
     final String ACCESS_TOKEN_SECRET = "k69lmJJCGIbs3QwA0opYYZDRUJLnzonXhr6YTmZRCVZK4";
-    Status status;
     
     void run() throws FileNotFoundException, IOException, TwitterException, InterruptedException {
     	ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -48,42 +45,26 @@ class TwitterCrawler {
 	        for (Status status : result.getTweets()) {
 	        	URLEntity[] urls = status.getURLEntities();
 	        	
-	        	String urlsString = "";
-	        	String ids = "";
-	        	
-	        	for(URLEntity url: urls){
-	        		String urlString = url.getExpandedURL();
+	        	if(UrlUtility.containsUrlSpotify(urls)){
+	        		String[] ids = UrlUtility.getIdsFromUrls(urls);
+	        		String idString = "";
 	        		
-	        		if(urlString.contains("spotify.com")){
-	        			urlsString += urlString + " - ";
-	        			StringTokenizer urlStringToken = new StringTokenizer(urlString,"/");
-	        			
-	        			String token = "";
-	        			
-	        			while(urlStringToken.hasMoreTokens())
-	        				token = urlStringToken.nextToken();
-	        			
-	        			ids += token + " -- ";
-	        				
+	        		for(String id:ids){
+	        			idString += id + " - ";
 	        		}
-	        			
-	        		if(urlString.contains("spoti.fi")) {
-						new UrlExpander();
-						urlsString += urlString + " --> "+ UrlExpander.expandUrl(urlString) + " - ";
-					}
+	        		
+		        	String str = i + "." + j + "..:" + status.getCreatedAt().toString() + " @" + status.getUser().getScreenName() + ":" + idString;
+		        	
+		        	out.write(str+"\n");
+		        	out.flush();
+		            System.out.println(str);
+		            j++;
 	        	}
-	        	
-	        	String str = i + "." + j + "..:" + status.getCreatedAt().toString() + " @" + status.getUser().getScreenName() + ":" + urlsString + ":" + ids;
-	        	
-	        	out.write(str+"\n");
-	        	out.flush();
-	            System.out.println(str);
-	            j++;
 	        }
 	        i++;
 	        Thread.sleep(20000);
         }
         
         out.close();
-    } 
+    }
 }
