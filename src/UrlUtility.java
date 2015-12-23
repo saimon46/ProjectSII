@@ -2,6 +2,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import twitter4j.URLEntity;
@@ -47,24 +49,21 @@ public class UrlUtility {
     	return ctr;
     }
     
-    public static String[] getIdsFromUrls(URLEntity[] urls) throws IOException{
-    	String[] ids = new String[urls.length];
-    	int i = 0;
+    public static List<String> getIdsFromUrls(URLEntity[] urls) throws IOException{
+    	List<String> ids = new ArrayList<String>();
     	
     	for(URLEntity url: urls){
     		String urlString = url.getExpandedURL();
     		
     		if(urlString.contains("spotify.com")){
-    			ids[i] = getSingleIdFromUrl(urlString);
-    			i++;
+    			ids.add(getSingleIdFromUrl(urlString));
     		}
     			
     		if(urlString.contains("spoti.fi")) {
-    			ids[i] = getSingleIdFromUrl(UrlUtility.expandUrl(urlString));
-    			i++;
+    			ids.add(getSingleIdFromUrl(UrlUtility.expandUrl(urlString)));
 			}
     	}
-    	if(ids.length == 0)
+    	if(ids.isEmpty())
     		return null;
     	return ids;
     }

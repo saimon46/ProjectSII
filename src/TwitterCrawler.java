@@ -2,6 +2,7 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -56,17 +57,29 @@ class TwitterCrawler {
 	    		
 	        	URLEntity[] urls = status.getURLEntities();
 	        	
-	        	if(UrlUtility.containsUrlSpotify(urls)){
-	        		String[] ids = UrlUtility.getIdsFromUrls(urls);
+	        	ArrayList<String> ids = (ArrayList<String>) UrlUtility.getIdsFromUrls(urls);
+	        	
+	        	//***se restituisce NULL l'utente non ha pubblicato link Spotify e deve essere scartato***
+	        	
+	        	if(ids != null){
+	        		//***estraggo dal database l'utente e se esiste non lo reinserisco ma lo utilizzo***
+	        		User user = (User)em.createQuery("SELECT u FROM User u WHERE u.name = '" + status.getUser().getScreenName() + "'").getSingleResult();
+	        		
+	        		if(user == null){
+	        			user = new User();
+	        			user.setIdTwitter(status.getUser().getId());
+	        			user.setName(status.getUser().getScreenName());
+	        		}else{
+	        			
+	        		}
+	        		
+	        		
 	        		String idString = "";
 	        		
 	        		for(String id:ids){
+	        			
 	        			idString += id + " - ";
 	        		}
-	        		
-	        		User user = new User();
-	        		user.setIdTwitter(status.getUser().getId());
-	        		user.setName(status.getUser().getScreenName());
 	        		
 		        	String str = i + "." + j + "..:" + status.getCreatedAt().toString() + " @" + status.getUser().getScreenName() + ":" + idString;
 		        	
