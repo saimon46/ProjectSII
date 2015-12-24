@@ -65,11 +65,12 @@ class TwitterCrawler {
 	        		//***estraggo dal database l'utente e se esiste non lo reinserisco ma lo utilizzo***
 	        		javax.persistence.Query qUser = em.createQuery("SELECT u FROM User u WHERE u.name = :name");
 	        		qUser.setParameter("name", status.getUser().getScreenName());
-	        		User user = (User) qUser.getSingleResult();
+	        		List<User> users = (List<User>) qUser.getResultList();
+	        		User user = null;
 	        		
 	        		String idString = "";
 	        		
-	        		if(user == null){
+	        		if(users.isEmpty()){
 	        			user = new User();
 	        			user.setIdTwitter(status.getUser().getId());
 	        			user.setName(status.getUser().getScreenName());
@@ -82,10 +83,7 @@ class TwitterCrawler {
 		        			idString += id + " - ";
 		        		}
 	        		}else{
-	        			//***estraggo dal database le tracce dell'utente che già esiste***
-	        			//javax.persistence.Query qTracks = em.createQuery("SELECT t FROM Track t WHERE t.user.name = :name");
-	        			//qTracks.setParameter("name",status.getUser().getScreenName());
-	        			//List<Track> tracks = (List<Track>)qTracks.getResultList();
+	        			user = users.get(0);
 	        			for(String id:ids){
 	        				Track track = user.hasTrack(id);
 	        				
@@ -111,6 +109,8 @@ class TwitterCrawler {
 		            System.out.println(str);
 		            j++;
 	        	}
+	        	
+	        	tx.commit();
 	        }
 	        i++;
 	        Thread.sleep(20000);

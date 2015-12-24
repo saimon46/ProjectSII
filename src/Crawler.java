@@ -16,8 +16,8 @@ public class Crawler {
 		EntityManager em = emf.createEntityManager();
 		
 		System.out.println("Creazione db completata!");
-		//TwitterCrawler crawler = new TwitterCrawler();
-		//crawler.run();
+		TwitterCrawler crawler = new TwitterCrawler();
+		crawler.run();
 		
 		/*User pippo = new User();
 		pippo.setName("pippo2312");
@@ -35,20 +35,38 @@ public class Crawler {
 		em.persist(pippo);
 		em.persist(canzone);
 		tx.commit();
-		*/
+		
+		//***************************************************************
+		
 		EntityTransaction tx1 = em.getTransaction();
 		tx1.begin();
 		
-		User users = (User)em.createQuery("SELECT c FROM User c WHERE c.name = 'pippo'").getSingleResult();
+		List<User> users = (List<User>)em.createQuery("SELECT c FROM User c WHERE c.name = 'pippo2312'").getResultList();
+		User user = null;
+		if(!users.isEmpty()){
+			user = users.get(0);
+		}else{
+			user = new User();
+			user.setName("pippo2312");
+			user.setIdTwitter(21);
+			em.persist(user);
+		}
 		
-		Track track = new Track();
-		track.setAuthor("Antonacci ciccooooo");
-		track.setIdSpotify("sdgisdghfgifuefsdfgogfgs");
-		track.setName("Piccolo2323");
-		track.setUrl("rfsdffdgdsgsdgssd");
-		users.addTrack(track);
+		Track track = user.hasTrack("sdgisdghfgifuefsdfgogfgs222");
 		
-		System.out.println(users.getName() + users.getId());
+		if(track != null){
+			track.incrementCount();
+		}else{
+			track = new Track();
+			track.setAuthor("Antonacci ciccooooo");
+			track.setIdSpotify("sdgisdghfgifuefsdfgogfgs222");
+			track.setName("Piccolo2323");
+			track.setUrl("rfsdffdgdsgsdgssd");
+			user.addTrack(track);
+		}
+		
+		System.out.println(user.getName() + user.getId());
+		em.persist(user);
 		em.persist(track);
 		
 		tx1.commit();
@@ -57,5 +75,7 @@ public class Crawler {
 
 		em.close();
 		emf.close();
+		
+		*/
 	}
 }

@@ -12,7 +12,10 @@ import twitter4j.URLEntity;
  * @author Abhijit Ghosh
  * @version 1.0
  */
-public class UrlUtility {	
+public class UrlUtility {
+	
+	final static int LENGTH_ID = 22;
+	
     public static String expandUrl(String shortenedUrl) throws IOException {
         URL url = new URL(shortenedUrl);
         // open connection
@@ -35,14 +38,21 @@ public class UrlUtility {
     		String urlString = url.getExpandedURL();
     		
     		if(urlString.contains(".spotify.com/track")){
-    			ctr = true;
-    			break;
+    			String singleId = getSingleIdFromUrl(urlString);
+				if(singleId.length() == LENGTH_ID){
+					ctr = true;
+					break;
+				}
     		}
     			
     		if(urlString.contains("spoti.fi/")) {
-				if(UrlUtility.expandUrl(urlString).contains(".spotify.com/track")){
-					ctr = true;
-					break;
+    			String expandUrl = expandUrl(urlString);
+				if(expandUrl.contains(".spotify.com/track")){
+					String singleId = getSingleIdFromUrl(expandUrl);
+					if(singleId.length() == LENGTH_ID){
+						ctr = true;
+						break;
+					}
 				}
 			}
     	}
@@ -56,12 +66,19 @@ public class UrlUtility {
     		String urlString = url.getExpandedURL();
     		
     		if(urlString.contains("spotify.com")){
-    			ids.add(getSingleIdFromUrl(urlString));
+    			String singleId = getSingleIdFromUrl(urlString);
+    			if(singleId.length() == LENGTH_ID){
+    				ids.add(singleId);
+    			}
     		}
     			
-    		if(urlString.contains("spoti.fi")) {
-    			ids.add(getSingleIdFromUrl(UrlUtility.expandUrl(urlString)));
-			}
+    		if(urlString.contains("spoti.fi")){
+    			String expandUrl = expandUrl(urlString);
+    			String singleId = getSingleIdFromUrl(expandUrl);
+    			if(singleId.length() == LENGTH_ID){
+    				ids.add(singleId);
+    			}
+   			}
     	}
     	if(ids.isEmpty())
     		return null;

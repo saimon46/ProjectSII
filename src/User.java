@@ -18,8 +18,7 @@ public class User {
 	@Column(nullable = false, unique=true)
 	private String name;
 	
-	@OneToMany(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
-	//@JoinColumn(name = "user_id")
+	@ManyToMany(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
 	private List<Track> tracks;
 	
 	public User(){
@@ -34,6 +33,7 @@ public class User {
 	public boolean addTrack(Track track){
 		if(!this.tracks.contains(track)){
 			this.tracks.add(track);
+			track.setUser(this);
 			return true;
 		}
 		return false;

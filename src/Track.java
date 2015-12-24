@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 @Entity
@@ -26,10 +29,11 @@ public class Track {
 	@Column
 	private int count;
 	
-	@ManyToOne
+	@ManyToMany(fetch=FetchType.EAGER)
 	private User user;
 
 	public Track(){
+		this.count = 1;
 	}
 	
 	public Track(String idSpotify, String name, String author, String album){
@@ -100,5 +104,13 @@ public class Track {
 
 	public void setCount(int count) {
 		this.count = count;
+	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 }
