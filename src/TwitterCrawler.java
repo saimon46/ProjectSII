@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -58,29 +59,51 @@ class TwitterCrawler {
 	        	URLEntity[] urls = status.getURLEntities();
 	        	
 	        	ArrayList<String> ids = (ArrayList<String>) UrlUtility.getIdsFromUrls(urls);
-	        	
 	        	//***se restituisce NULL l'utente non ha pubblicato link Spotify e deve essere scartato***
 	        	
 	        	if(ids != null){
 	        		//***estraggo dal database l'utente e se esiste non lo reinserisco ma lo utilizzo***
-	        		User user = (User)em.createQuery("SELECT u FROM User u WHERE u.name = '" + status.getUser().getScreenName() + "'").getSingleResult();
+	        		javax.persistence.Query qUser = em.createQuery("SELECT u FROM User u WHERE u.name = :name");
+	        		qUser.setParameter("name", status.getUser().getScreenName());
+	        		User user = (User) qUser.getSingleResult();
+	        		
+	        		String idString = "";
 	        		
 	        		if(user == null){
 	        			user = new User();
 	        			user.setIdTwitter(status.getUser().getId());
 	        			user.setName(status.getUser().getScreenName());
+	        			
+	        			for(String id:ids){
+		        			Track track = new Track();
+		        			track.setIdSpotify(id);
+		        			user.addTrack(track);
+		        			em.persist(track);
+		        			idString += id + " - ";
+		        		}
 	        		}else{
-	        			
+	        			//***estraggo dal database le tracce dell'utente che già esiste***
+	        			//javax.persistence.Query qTracks = em.createQuery("SELECT t FROM Track t WHERE t.user.name = :name");
+	        			//qTracks.setParameter("name",status.getUser().getScreenName());
+	        			//List<Track> tracks = (List<Track>)qTracks.getResultList();
+	        			for(String id:ids){
+	        				Track track = user.hasTrack(id);
+	        				
+	        				if(track != null){
+	        					track.incrementCount();
+	        				}else{
+	        					track = new Track();
+	        					track.setIdSpotify(id);
+			        			user.addTrack(track);
+	        				}
+	        				
+		        			em.persist(track);
+		        			idString += id + " - ";
+		        		}
 	        		}
 	        		
-	        		
-	        		String idString = "";
-	        		
-	        		for(String id:ids){
-	        			
-	        			idString += id + " - ";
-	        		}
-	        		
+	        		em.persist(user);
+        		
 		        	String str = i + "." + j + "..:" + status.getCreatedAt().toString() + " @" + status.getUser().getScreenName() + ":" + idString;
 		        	
 		        	out.write(str+"\n");

@@ -11,10 +11,10 @@ public class Track {
 	@Column(nullable = false)
 	private String idSpotify;
 	
-	@Column(nullable = false)
+	@Column
 	private String name;
 	
-	@Column(nullable = false)
+	@Column
 	private String author;
 	
 	@Column
@@ -23,6 +23,12 @@ public class Track {
 	@Column
 	private String url;
 	
+	@Column
+	private int count;
+	
+	@ManyToOne
+	private User user;
+
 	public Track(){
 	}
 	
@@ -32,6 +38,12 @@ public class Track {
 		this.author = author;
 		this.album = album;
 		this.url = "https://play.spotify.com/track/" + idSpotify;
+		this.count = 1;
+	}
+	
+	public int incrementCount(){
+		this.count++;
+		return this.count;
 	}
 
 	public long getId() {
@@ -80,5 +92,13 @@ public class Track {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 }

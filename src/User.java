@@ -18,8 +18,8 @@ public class User {
 	@Column(nullable = false, unique=true)
 	private String name;
 	
-	@OneToMany
-	@JoinColumn(name = "user_id")
+	@OneToMany(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
+	//@JoinColumn(name = "user_id")
 	private List<Track> tracks;
 	
 	public User(){
@@ -39,8 +39,14 @@ public class User {
 		return false;
 	}
 	
-	public boolean hasTrack(Track track){
-		return this.tracks.contains(track);
+	public Track hasTrack(String idSpotify){
+		Track track = null;
+		
+		for(Track trackIterator:tracks)
+			if(trackIterator.getIdSpotify().equals(idSpotify))
+				track = trackIterator;
+					
+		return track;
 	}
 
 	public String getId() {
