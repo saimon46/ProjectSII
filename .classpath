@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/openjpa-2.4.0.jar"/>
 	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/openjpa-all-2.4.0.jar"/>
 	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/slf4j-simple-1.7.13.jar"/>
+	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/spotify-web-api-java-1.5.0.jar"/>
+	<classpathentry kind="lib" path="/home/simone/workspace/ProjectSII/lib/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

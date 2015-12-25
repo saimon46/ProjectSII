@@ -29,7 +29,7 @@ public class Track {
 	@Column
 	private int count;
 	
-	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER)
 	private User user;
 
 	public Track(){

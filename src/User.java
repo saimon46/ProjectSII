@@ -12,13 +12,12 @@ public class User {
 	private String id;
 	
 	@Column(unique=true)
-	
 	private long idTwitter;
 	
 	@Column(nullable = false, unique=true)
 	private String name;
 	
-	@ManyToMany(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
+	@OneToMany(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
 	private List<Track> tracks;
 	
 	public User(){
