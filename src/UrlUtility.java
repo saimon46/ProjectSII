@@ -65,18 +65,20 @@ public class UrlUtility {
     	for(URLEntity url: urls){
     		String urlString = url.getExpandedURL();
     		
-    		if(urlString.contains("spotify.com")){
+    		if(urlString.contains(".spotify.com/track")){
     			String singleId = getSingleIdFromUrl(urlString);
     			if(singleId.length() == LENGTH_ID){
     				ids.add(singleId);
     			}
     		}
     			
-    		if(urlString.contains("spoti.fi")){
+    		if(urlString.contains("spoti.fi/")){
     			String expandUrl = expandUrl(urlString);
-    			String singleId = getSingleIdFromUrl(expandUrl);
-    			if(singleId.length() == LENGTH_ID){
-    				ids.add(singleId);
+    			if(expandUrl.contains(".spotify.com/track")){
+	    			String singleId = getSingleIdFromUrl(expandUrl);
+	    			if(singleId.length() == LENGTH_ID){
+	    				ids.add(singleId);
+	    			}
     			}
    			}
     	}

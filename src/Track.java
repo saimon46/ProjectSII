@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.*;
 
 @Entity
@@ -29,6 +26,9 @@ public class Track {
 	@Column
 	private int count;
 	
+	@Column
+	private double popularity;
+	
 	@ManyToOne(fetch=FetchType.EAGER)
 	private User user;
 
@@ -36,13 +36,14 @@ public class Track {
 		this.count = 1;
 	}
 	
-	public Track(String idSpotify, String name, String author, String album){
+	public Track(String idSpotify, String name, String author, String album, double popularity){
 		this.idSpotify = idSpotify;
 		this.name = name;
 		this.author = author;
 		this.album = album;
 		this.url = "https://play.spotify.com/track/" + idSpotify;
 		this.count = 1;
+		this.popularity = popularity;
 	}
 	
 	public int incrementCount(){
@@ -106,6 +107,14 @@ public class Track {
 		this.count = count;
 	}
 	
+	public double getPopolarity() {
+		return popularity;
+	}
+
+	public void setPopolarity(double popularity) {
+		this.popularity = popularity;
+	}
+
 	public User getUser() {
 		return user;
 	}

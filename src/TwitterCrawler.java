@@ -10,6 +10,10 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
+import com.wrapper.spotify.Api;
+import com.wrapper.spotify.exceptions.WebApiException;
+import com.wrapper.spotify.models.SimpleArtist;
+
 import twitter4j.Query;
 import twitter4j.Query.ResultType;
 import twitter4j.QueryResult;
@@ -22,13 +26,13 @@ import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
 class TwitterCrawler {
-	
-    final String CONSUMER_KEY = "WCADpVfbO6csxBLTlKK9SWTqW";
+	final String CONSUMER_KEY = "WCADpVfbO6csxBLTlKK9SWTqW";
     final String CONSUMER_KEY_SECRET = "fjokyct4BQoUQYCDOEq1eyCZZ1Bqx5UTY7GacKn1kHYJfA0Vv7";
     final String ACCESS_TOKEN = "4482711635-W4kukDswSRXCkBarjh8fz7wFW3ZoRvyf1ASml2F";
     final String ACCESS_TOKEN_SECRET = "k69lmJJCGIbs3QwA0opYYZDRUJLnzonXhr6YTmZRCVZK4";
+    Api spotify = Api.DEFAULT_API;
     
-    void run() throws FileNotFoundException, IOException, TwitterException, InterruptedException {
+    void run() throws FileNotFoundException, IOException, TwitterException, InterruptedException, WebApiException {
     	EntityManagerFactory emf = Persistence.createEntityManagerFactory("projectSII");
 		EntityManager em = emf.createEntityManager();
 
@@ -52,10 +56,9 @@ class TwitterCrawler {
         while(a){
 	        QueryResult result = twitter.search(query);
 	        int j=1;
-	        for (Status status : result.getTweets()) {
+	        for (Status status:result.getTweets()) {
 	        	EntityTransaction tx = em.getTransaction();
 	    		tx.begin();
-	    		
 	        	URLEntity[] urls = status.getURLEntities();
 	        	
 	        	ArrayList<String> ids = (ArrayList<String>) UrlUtility.getIdsFromUrls(urls);
@@ -76,9 +79,20 @@ class TwitterCrawler {
 	        			user.setName(status.getUser().getScreenName());
 	        			
 	        			for(String id:ids){
-		        			Track track = new Track();
-		        			track.setIdSpotify(id);
+	        				com.wrapper.spotify.models.Track trackSpotify = spotify.getTrack(id).build().get();
+        					String trackName = trackSpotify.getName();
+        					String trackAlbum = trackSpotify.getAlbum().getName();
+        					double trackPopularity = trackSpotify.getPopularity()/100.0;
+        					String trackAuthors = "";
+        					
+        					List<SimpleArtist> artistList = trackSpotify.getArtists();
+        					for(SimpleArtist artist:artistList)
+        						trackAuthors += artist.getName() + ", ";
+        					trackAuthors = trackAuthors.substring(0, trackAuthors.length()-2);
+        					
+        					Track track = new Track(id, trackName, trackAuthors, trackAlbum, trackPopularity);
 		        			user.addTrack(track);
+		        			
 		        			em.persist(track);
 		        			idString += id + " - ";
 		        		}
@@ -90,8 +104,18 @@ class TwitterCrawler {
 	        				if(track != null){
 	        					track.incrementCount();
 	        				}else{
-	        					track = new Track();
-	        					track.setIdSpotify(id);
+	        					com.wrapper.spotify.models.Track trackSpotify = spotify.getTrack(id).build().get();
+	        					String trackName = trackSpotify.getName();
+	        					String trackAlbum = trackSpotify.getAlbum().getName();
+	        					double trackPopularity = trackSpotify.getPopularity()/100.0;
+	        					String trackAuthors = "";
+	        					
+	        					List<SimpleArtist> artistList = trackSpotify.getArtists();
+	        					for(SimpleArtist artist:artistList)
+	        						trackAuthors += artist.getName()+",";
+	        					trackAuthors = trackAuthors.substring(0, trackAuthors.length()-1);
+	        					
+	        					track = new Track(id, trackName, trackAuthors, trackAlbum, trackPopularity);
 			        			user.addTrack(track);
 	        				}
 	        				
