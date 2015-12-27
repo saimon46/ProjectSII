@@ -18,34 +18,31 @@ public class User {
 	private String name;
 	
 	@OneToMany(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.REMOVE)
-	private List<Track> tracks;
+	private List<Tweet> tweets;
 	
 	public User(){
-		this.tracks = new ArrayList<Track>();
+		this.tweets = new ArrayList<Tweet>();
 	}
 	
-	public User(String nome){
-		this.name = nome;
-		this.tracks = new ArrayList<Track>();
+	public User(long idTwitter, String name){
+		this.idTwitter = idTwitter;
+		this.name = name;
+		this.tweets = new ArrayList<Tweet>();
 	}
 	
-	public boolean addTrack(Track track){
-		if(!this.tracks.contains(track)){
-			this.tracks.add(track);
-			track.setUser(this);
-			return true;
-		}
-		return false;
+	public void addTweet(Tweet tweet){
+		this.tweets.add(tweet);
+		tweet.setUser(this);
 	}
 	
-	public Track hasTrack(String idSpotify){
-		Track track = null;
+	public Tweet hasTrackInTweet(String idSpotify){
+		Tweet tweet = null;
 		
-		for(Track trackIterator:tracks)
-			if(trackIterator.getIdSpotify().equals(idSpotify))
-				track = trackIterator;
+		for(Tweet tweetIterator:tweets)
+			if(tweetIterator.getTrack().getIdSpotify().equals(idSpotify))
+				tweet = tweetIterator;
 					
-		return track;
+		return tweet;
 	}
 
 	public String getId() {
@@ -72,11 +69,11 @@ public class User {
 		this.name = name;
 	}
 
-	public List<Track> getTracks() {
-		return tracks;
+	public List<Tweet> getTweets() {
+		return tweets;
 	}
 
-	public void setTracks(List<Track> tracks) {
-		this.tracks = tracks;
+	public void setTracks(List<Tweet> tweets) {
+		this.tweets = tweets;
 	}
 }

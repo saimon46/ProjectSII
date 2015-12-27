@@ -74,36 +74,17 @@ class TwitterCrawler {
 	        		String idString = "";
 	        		
 	        		if(users.isEmpty()){
-	        			user = new User();
-	        			user.setIdTwitter(status.getUser().getId());
-	        			user.setName(status.getUser().getScreenName());
+	        			long userIdTwitter = status.getUser().getId();
+	        			String userName = status.getUser().getScreenName();
+	        			user = new User(userIdTwitter, userName);
 	        			
 	        			for(String id:ids){
-	        				com.wrapper.spotify.models.Track trackSpotify = spotify.getTrack(id).build().get();
-        					String trackName = trackSpotify.getName();
-        					String trackAlbum = trackSpotify.getAlbum().getName();
-        					double trackPopularity = trackSpotify.getPopularity()/100.0;
-        					String trackAuthors = "";
-        					
-        					List<SimpleArtist> artistList = trackSpotify.getArtists();
-        					for(SimpleArtist artist:artistList)
-        						trackAuthors += artist.getName() + ", ";
-        					trackAuthors = trackAuthors.substring(0, trackAuthors.length()-2);
-        					
-        					Track track = new Track(id, trackName, trackAuthors, trackAlbum, trackPopularity);
-		        			user.addTrack(track);
-		        			
-		        			em.persist(track);
-		        			idString += id + " - ";
-		        		}
-	        		}else{
-	        			user = users.get(0);
-	        			for(String id:ids){
-	        				Track track = user.hasTrack(id);
+	        				javax.persistence.Query qTrack = em.createQuery("SELECT t FROM Track t WHERE t.idSpotify = :id");
+	    	        		qTrack.setParameter("id", id);
+	    	        		List<Track> tracks = (List<Track>) qTrack.getResultList();
+	    	        		Track track = null;
 	        				
-	        				if(track != null){
-	        					track.incrementCount();
-	        				}else{
+	        				if(tracks.isEmpty()){
 	        					com.wrapper.spotify.models.Track trackSpotify = spotify.getTrack(id).build().get();
 	        					String trackName = trackSpotify.getName();
 	        					String trackAlbum = trackSpotify.getAlbum().getName();
@@ -112,14 +93,62 @@ class TwitterCrawler {
 	        					
 	        					List<SimpleArtist> artistList = trackSpotify.getArtists();
 	        					for(SimpleArtist artist:artistList)
-	        						trackAuthors += artist.getName()+",";
-	        					trackAuthors = trackAuthors.substring(0, trackAuthors.length()-1);
+	        						trackAuthors += artist.getName() + ", ";
+	        					trackAuthors = trackAuthors.substring(0, trackAuthors.length()-2);
 	        					
 	        					track = new Track(id, trackName, trackAuthors, trackAlbum, trackPopularity);
-			        			user.addTrack(track);
+	        				}else{
+	        					System.out.println("-----------------------doppione------------------------");
+	        					track = tracks.get(0);
 	        				}
 	        				
-		        			em.persist(track);
+	        				Tweet tweet = new Tweet();
+	        				tweet.setTrack(track);
+	        				user.addTweet(tweet);
+	        				em.persist(tweet);
+	        				em.persist(track);
+		        			
+		        			idString += id + " - ";
+		        		}
+	        		}else{
+	        			user = users.get(0);
+	        			
+	        			for(String id:ids){
+	        				Tweet tweet = user.hasTrackInTweet(id);
+	        				
+	        				if(tweet != null){
+	        					tweet.incrementCount();
+	        				}else{
+	        					javax.persistence.Query qTrack = em.createQuery("SELECT t FROM Track t WHERE t.idSpotify = :id");
+		    	        		qTrack.setParameter("id", id);
+		    	        		List<Track> tracks = (List<Track>) qTrack.getResultList();
+		    	        		Track track = null;
+		        				
+		        				if(tracks.isEmpty()){
+		        					com.wrapper.spotify.models.Track trackSpotify = spotify.getTrack(id).build().get();
+		        					String trackName = trackSpotify.getName();
+		        					String trackAlbum = trackSpotify.getAlbum().getName();
+		        					double trackPopularity = trackSpotify.getPopularity()/100.0;
+		        					String trackAuthors = "";
+		        					
+		        					List<SimpleArtist> artistList = trackSpotify.getArtists();
+		        					for(SimpleArtist artist:artistList)
+		        						trackAuthors += artist.getName() + ", ";
+		        					trackAuthors = trackAuthors.substring(0, trackAuthors.length()-2);
+		        					
+		        					track = new Track(id, trackName, trackAuthors, trackAlbum, trackPopularity);
+		        				}else{
+		        					System.out.println("-----------------------doppione------------------------");
+		        					track = tracks.get(0);
+		        				}
+		        				
+		        				tweet = new Tweet();
+		        				tweet.setTrack(track);
+			        			user.addTweet(tweet);
+			        			em.persist(tweet);
+		        				em.persist(track);
+	        				}
+	        				
 		        			idString += id + " - ";
 		        		}
 	        		}

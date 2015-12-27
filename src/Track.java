@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 @Entity
@@ -24,16 +27,13 @@ public class Track {
 	private String url;
 	
 	@Column
-	private int count;
-	
-	@Column
 	private double popularity;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
-	private User user;
-
+	@OneToMany(mappedBy="track", fetch=FetchType.EAGER)
+	private List<Tweet> tweets;
+	
 	public Track(){
-		this.count = 1;
+		this.tweets = new ArrayList<Tweet>();
 	}
 	
 	public Track(String idSpotify, String name, String author, String album, double popularity){
@@ -42,13 +42,8 @@ public class Track {
 		this.author = author;
 		this.album = album;
 		this.url = "https://play.spotify.com/track/" + idSpotify;
-		this.count = 1;
 		this.popularity = popularity;
-	}
-	
-	public int incrementCount(){
-		this.count++;
-		return this.count;
+		this.tweets = new ArrayList<Tweet>();
 	}
 
 	public long getId() {
@@ -98,28 +93,24 @@ public class Track {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	public int getCount() {
-		return count;
-	}
 
-	public void setCount(int count) {
-		this.count = count;
-	}
-	
-	public double getPopolarity() {
+	public double getPopularity() {
 		return popularity;
 	}
 
-	public void setPopolarity(double popularity) {
+	public void setPopularity(double popularity) {
 		this.popularity = popularity;
 	}
 
-	public User getUser() {
-		return user;
+	public List<Tweet> getTweets() {
+		return tweets;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setTweets(List<Tweet> tweets) {
+		this.tweets = tweets;
+	}
+	
+	public void addTweet(Tweet tweet){
+		this.tweets.add(tweet);
 	}
 }
