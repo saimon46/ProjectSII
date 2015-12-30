@@ -1,3 +1,4 @@
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +18,7 @@ public class Tweet {
 	@Column
 	private int count;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER, cascade = CascadeType.PERSIST)
 	private User user;
 	
 	@ManyToOne(fetch=FetchType.EAGER)

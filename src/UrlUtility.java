@@ -74,12 +74,12 @@ public class UrlUtility {
     			
     		if(urlString.contains("spoti.fi/")){
     			String expandUrl = expandUrl(urlString);
-    			if(expandUrl.contains(".spotify.com/track")){
-	    			String singleId = getSingleIdFromUrl(expandUrl);
-	    			if(singleId.length() == LENGTH_ID){
-	    				ids.add(singleId);
+	    		if(expandUrl != null)
+	    			if(expandUrl.contains(".spotify.com/track")){
+		    			String singleId = getSingleIdFromUrl(expandUrl);
+		    			if(singleId.length() == LENGTH_ID)
+		    				ids.add(singleId);
 	    			}
-    			}
    			}
     	}
     	if(ids.isEmpty())

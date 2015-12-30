@@ -29,7 +29,7 @@ public class Track {
 	@Column
 	private double popularity;
 	
-	@OneToMany(mappedBy="track", fetch=FetchType.EAGER)
+	@OneToMany(mappedBy="track", fetch=FetchType.EAGER, cascade = CascadeType.REMOVE)
 	private List<Tweet> tweets;
 	
 	public Track(){
