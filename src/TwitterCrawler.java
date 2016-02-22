@@ -53,7 +53,9 @@ class TwitterCrawler {
         int i=1;
         boolean a = true;
         
+        //***ciclo di estrazione infinito***
         while(a){
+        	//***query a twitter con parola chiave 'spotify'***
 	        QueryResult result = twitter.search(query);
 	        int j=1;
 	        for (Status status:result.getTweets()) {
@@ -79,12 +81,14 @@ class TwitterCrawler {
 	        			user = new User(userIdTwitter, userName);
 	        			
 	        			for(String id:ids){
+	        				//***inserisco il tweet controllando se esiste la canzone o meno***
 	        				javax.persistence.Query qTrack = em.createQuery("SELECT t FROM Track t WHERE t.idSpotify = :id");
 	    	        		qTrack.setParameter("id", id);
 	    	        		List<Track> tracks = (List<Track>) qTrack.getResultList();
 	    	        		Track track = null;
 	        				
 	        				if(tracks.isEmpty()){
+	        					//***se non esiste la canzone la creo***
 	        					com.wrapper.spotify.models.Track trackSpotify = spotify.getTrack(id).build().get();
 	        					String trackName = trackSpotify.getName();
 	        					String trackAlbum = trackSpotify.getAlbum().getName();
@@ -98,10 +102,11 @@ class TwitterCrawler {
 	        					
 	        					track = new Track(id, trackName, trackAuthors, trackAlbum, trackPopularity);
 	        				}else{
-	        					System.out.println("-----------------------doppione------------------------");
+	        					System.out.println("-----------------------utente doppione------------------------");
 	        					track = tracks.get(0);
 	        				}
 	        				
+	        				//***creo il tweet e memorizzo il tutto***
 	        				Tweet tweet = new Tweet();
 	        				tweet.setTrack(track);
 	        				user.addTweet(tweet);
@@ -111,6 +116,7 @@ class TwitterCrawler {
 		        			idString += id + " - ";
 		        		}
 	        		}else{
+	        			//***se l'utente già esiste invece lo utilizzo e aggiungo il tweet ai suoi***
 	        			user = users.get(0);
 	        			
 	        			for(String id:ids){
@@ -119,12 +125,14 @@ class TwitterCrawler {
 	        				if(tweet != null){
 	        					tweet.incrementCount();
 	        				}else{
+	        					//***inserisco il tweet controllando se esiste la canzone o meno***
 	        					javax.persistence.Query qTrack = em.createQuery("SELECT t FROM Track t WHERE t.idSpotify = :id");
 		    	        		qTrack.setParameter("id", id);
 		    	        		List<Track> tracks = (List<Track>) qTrack.getResultList();
 		    	        		Track track = null;
 		        				
 		        				if(tracks.isEmpty()){
+		        					//***se non esiste la canzone la creo***
 		        					com.wrapper.spotify.models.Track trackSpotify = spotify.getTrack(id).build().get();
 		        					String trackName = trackSpotify.getName();
 		        					String trackAlbum = trackSpotify.getAlbum().getName();
@@ -142,6 +150,7 @@ class TwitterCrawler {
 		        					track = tracks.get(0);
 		        				}
 		        				
+		        				//***creo il tweet e memorizzo il tutto***
 		        				tweet = new Tweet();
 		        				tweet.setTrack(track);
 			        			user.addTweet(tweet);
