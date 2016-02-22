@@ -44,6 +44,19 @@ public class User {
 					
 		return tweet;
 	}
+	
+	public List<Track> getTracks(){
+		List<Track> tracks = new ArrayList<Track>();
+		Track track = null;
+		
+		for(Tweet tweet:this.tweets){
+			track = tweet.getTrack();
+			if(!tracks.contains(track))
+				tracks.add(track);
+		}
+		
+		return tracks;
+	}
 
 	public String getId() {
 		return id;
@@ -73,7 +86,7 @@ public class User {
 		return tweets;
 	}
 
-	public void setTracks(List<Tweet> tweets) {
+	public void setTweets(List<Tweet> tweets) {
 		this.tweets = tweets;
 	}
 }
